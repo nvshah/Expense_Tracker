@@ -34,17 +34,31 @@ class MyHomePage extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Container(),
-          Card(elevation: 5, child: Container(
-            padding: EdgeInsets.all(10),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
-              TextField(decoration: InputDecoration(labelText: 'Title'),),
-              TextField(decoration: InputDecoration(labelText: 'Amount'),),
-              FlatButton(child: Text('Add Transaction'), textColor: Colors.purpleAccent, onPressed: (){
-                print(titleController.text);
-                print(amountController.text);
-              },),
-            ],),
-          ),),
+          Card(
+            elevation: 5,
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  TextField(
+                    decoration: InputDecoration(labelText: 'Title'),
+                  ),
+                  TextField(
+                    decoration: InputDecoration(labelText: 'Amount'),
+                  ),
+                  FlatButton(
+                    child: Text('Add Transaction'),
+                    textColor: Colors.purpleAccent,
+                    onPressed: () {
+                      print(titleController.text);
+                      print(amountController.text);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
           Column(
             children: transactions.map((tx) {
               return Card(
@@ -62,14 +76,32 @@ class MyHomePage extends StatelessWidget {
                         ),
                       ),
                       padding: EdgeInsets.all(10),
-                      child: Text('\$${tx.amount}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurple,),),
+                      child: Text(
+                        '\$${tx.amount}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
                     ),
                     Column(
                       //Aligning All details on left side
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(tx.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,),),
-                        Text(DateFormat.yMMMd().format(tx.date), style: TextStyle(color: Colors.blueGrey,),),
+                        Text(
+                          tx.title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          DateFormat.yMMMd().format(tx.date),
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                          ),
+                        ),
                       ],
                     ),
                   ],
