@@ -30,7 +30,7 @@ class TransactionList extends StatelessWidget {
                   ),
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    '\$${transactions[index].amount}',
+                    '\$${transactions[index].amount.toStringAsFixed(2)}',  // Display the amount in always 2 decimal places
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
