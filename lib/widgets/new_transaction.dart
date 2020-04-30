@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
+//Converted to State ful Widget inorder to avoid loosing of inputs entered in Modal Sheet 
+// this will hold the inputs, as state is being handled diff than Widget & so state is maintained 
+class NewTransaction extends StatefulWidget {
   //Properties
   final Function addTx;
 
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
-
   NewTransaction(this.addTx);
 
+  @override
+  _NewTransactionState createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final titleController = TextEditingController();
+
+  final amountController = TextEditingController();
+  
+  // submit transaction data to Denominator/Parent class & so list of transactions get updated
   void sendData() {
     String enteredTitle = titleController.text;
     double enteredAmount = double.parse(amountController.text);
 
+    //if any input field is invalid
     if (enteredTitle.isEmpty || enteredAmount < 0) {
       return;
     }
-    addTx(
+    // Add transaction to transactions List
+    widget.addTx(
       enteredTitle,
       enteredAmount,
     );
+    //close modal sheet when input's completed & transaction added to transaction list; come back to main screen
+    //context here gives you context of widget
+    Navigator.of(context).pop();
   }
 
   @override
