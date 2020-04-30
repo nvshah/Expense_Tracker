@@ -24,7 +24,7 @@ class TransactionList extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.deepPurple,
+                      color: Theme.of(context).primaryColor,  // give reference/tunnel to theme data; define in MateriaApp
                       width: 2,
                     ),
                   ),
@@ -34,7 +34,7 @@ class TransactionList extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
@@ -42,13 +42,12 @@ class TransactionList extends StatelessWidget {
                   //Aligning All details on left side
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    // Title
                     Text(
                       transactions[index].title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.title,  // fetching style from global style define in MaterialApp
                     ),
+                    // Date
                     Text(
                       DateFormat.yMMMd().format(transactions[index].date),
                       style: TextStyle(
