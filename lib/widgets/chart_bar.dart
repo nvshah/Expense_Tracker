@@ -11,7 +11,11 @@ class ChartBar extends StatelessWidget {
     //Single bar in standing in row
     return Column(
       children: <Widget>[
-        Text('\$${spendingAmount.toStringAsFixed(0)}'),
+        // Prevents that this Text keep it's original size | You will not grwo in anyway | Shrinkt to fit into the box
+        // Avoid line breaks due to larget text
+        FittedBox(
+          child: Text('\$${spendingAmount.toStringAsFixed(0)}'),
+        ),
         // 4 pixels gap
         SizedBox(
           height: 4,
