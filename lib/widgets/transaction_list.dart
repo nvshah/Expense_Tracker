@@ -52,7 +52,7 @@ class TransactionList extends StatelessWidget {
                         padding: EdgeInsets.all(10),
                         child: Text(
                           // Display the amount in always 2 decimal places
-                          '\$${transactions[index].amount.toStringAsFixed(2)}', 
+                          '\$${transactions[index].amount.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -67,9 +67,8 @@ class TransactionList extends StatelessWidget {
                           // Title
                           Text(
                             transactions[index].title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .title, // fetching style from global style define in MaterialApp
+                            // fetching style from global style define in MaterialApp
+                            style: Theme.of(context).textTheme.title,
                           ),
                           // Date
                           Text(

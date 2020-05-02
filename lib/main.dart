@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './widgets/new_transaction.dart';
 import './models/transaction.dart';
 import './widgets/transaction_list.dart';
+import './widgets/chart.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple, //primary color
         accentColor: Colors.amber, //alternative color
         fontFamily: 'Quicksand',
-        //Don't ovveride all but title that is marked in AppBar by flutter
+        //Don't override all text but title that is marked in AppBar by flutter
         appBarTheme: AppBarTheme(
           //Copy default text settings i.e font size, & all but with different style specific for title under Appbar
           textTheme: ThemeData.light().textTheme.copyWith(
@@ -47,7 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    Transaction(id: '2', amount: 10, date: DateTime.now(), title: 'Drinks'),
+    //Transaction(id: '2', amount: 10, date: DateTime.now(), title: 'Drinks'),
   ];
 
   // Add new transaction to transaction lists
@@ -80,6 +81,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  List<Transaction> get _recentTransactions{
+    //Only transactions that are younger than 7 days are included here
+    return _userTransactions.where((tx){
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7,)));
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(),
+            Chart(_recentTransactions),
             TransactionList(_userTransactions),
           ],
         ),
