@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import './widgets/new_transaction.dart';
 import './models/transaction.dart';
 import './widgets/transaction_list.dart';
 import './widgets/chart.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // SystemChrome.setPreferredOrientations([
+  // Only App will support only potrait mode
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitUp,
+  // ]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -49,6 +57,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _showChart = false;
   final List<Transaction> _userTransactions = [
     //Transaction(id: '2', amount: 10, date: DateTime.now(), title: 'Drinks'),
   ];
@@ -120,6 +129,20 @@ class _MyHomePageState extends State<MyHomePage> {
     //get the height value covered by status bar , which is implicitly assigned by Flutter itlself
     final statusBarHeight = MediaQuery.of(context).padding.top;
 
+    // check if current orientation is landscope or not
+    final isLandScapeMode =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    //Transactions List | Take 70% of Screen excluding AppBar size & status bar size
+    final txListWidget = Container(
+      //Take 70% height of screen left after neglecting appBar height & status bar height
+      height: (MediaQuery.of(context).size.height -
+              appBar.preferredSize.height -
+              statusBarHeight) *
+          0.7,
+      child: TransactionList(_userTransactions, _deleteTransaction),
+    );
+
     return Scaffold(
       appBar: appBar,
       //ScrollView on Parent is required inorder to use scroll view for child
@@ -127,24 +150,46 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            //Bar Chart | Take 40% of Screen excluding AppBar size & status bar size
-            Container(
-              //Take 40% height of screen left after neglectign appBar height & status bar height
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      statusBarHeight) *
-                  0.4,
-              child: Chart(_recentTransactions),
-            ),
-            //Transactions List | Take 60% of Screen excluding AppBar size & status bar size
-            Container(
-              //Take 60% height of screen left after neglecting appBar height & status bar height
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      statusBarHeight) *
-                  0.6,
-              child: TransactionList(_userTransactions, _deleteTransaction),
-            ),
+            //Switch
+            if (isLandScapeMode)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Show Chart'),
+                  Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    },
+                  )
+                ],
+              ),
+            if (!isLandScapeMode) ...[
+              //Bar Chart | Take 30% of Screen excluding AppBar size & status bar size in potrait mode
+              Container(
+                //Take 30% height of screen left after neglectign appBar height & status bar height in Potrait mode
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        statusBarHeight) *
+                    0.3,
+                child: Chart(_recentTransactions),
+              ),
+              txListWidget,
+            ] else
+              _showChart
+                  ?
+                  //Bar Chart | Take 70% of Screen excluding AppBar size & status bar size in landscape mode
+                  Container(
+                      //Take 70% height of screen left after neglectign appBar height & status bar height in landscape mode
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              statusBarHeight) *
+                          0.7,
+                      child: Chart(_recentTransactions),
+                    )
+                  : txListWidget,
           ],
         ),
       ),

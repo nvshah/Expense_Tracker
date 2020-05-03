@@ -13,27 +13,34 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     // Bottom container will have fixed 60% of screen height
     return transactions.isEmpty
-        ? Column(
-            children: <Widget>[
-              Text(
-                'No transactions added yet.. !',
-                style: Theme.of(context).textTheme.title,
-              ),
-              // Act as a seperator between Text & Image container
-              SizedBox(
-                height: 10,
-              ),
-              // Image
-              Container(
-                //Image need container as a parent inorder to fit appropriate otherwise it will not fit to column as column takes as much height as it got
-                height: 200,
-                child: Image.asset(
-                  'assets/images/waiting.png',
-                  // this makes image to fit to it's surrounding
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
+        ? LayoutBuilder(
+            builder: (ctxt, constraints) {
+              return Column(
+                children: <Widget>[
+                  //Empty Transaction text
+                  Text(
+                    'No transactions added yet.. !',
+                    style: Theme.of(context).textTheme.title,
+                  ),
+                  // Act as a seperator between Text & Image container
+                  SizedBox(
+                    //Seperation will adjust it's height as of 10 % of total Height assigned for transactions list
+                    height: 10,
+                  ),
+                  // Image
+                  Container(
+                    //Image need container as a parent inorder to fit appropriate otherwise it will not fit to column as column takes as much height as it got
+                    //Image will take height dynamically equals to 60% of the available height fot transactions list
+                    height: constraints.maxHeight * 0.6,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      // this makes image to fit to it's surrounding
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              );
+            },
           )
         //ListView - So that transactions can be scrolled within Container
         : ListView.builder(
