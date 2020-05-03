@@ -9,6 +9,7 @@ class Chart extends StatelessWidget {
 
   Chart(this.recentTransactions);
 
+  //get the data of last seven day transactions
   List<Map<String, Object>> get groupedTransactionValues {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().subtract(
@@ -31,7 +32,8 @@ class Chart extends StatelessWidget {
         'day': DateFormat.E().format(weekDay).substring(0, 1),
         'amount': totalSum
       };
-    });
+    }).reversed.toList();
+  // Reversed needed :- oldest first & current on end on the bar chart
   }
 
   // calculate total spending happened in last 7 days
@@ -46,14 +48,17 @@ class Chart extends StatelessWidget {
     return Card(
         elevation: 6,
         margin: EdgeInsets.all(20),
+        //As a card not have padding option so use Padding Widget for Row Widget
         child: Padding(
           //Require some space between ChartBar & Card border to have some good appearance
           padding: EdgeInsets.all(10),
           child: Row(
+            //Evenly space around all bars
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: groupedTransactionValues.map((data) {
-              return Flexible(
+              return Expanded(
                 //don't allow ChartBar to grow & take size of it's sibbling ChartBar
-                fit: FlexFit.tight,
+                //fit: FlexFit.tight,
                 child: ChartBar(
                     data['day'],
                     data['amount'],

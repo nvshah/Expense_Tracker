@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 class ChartBar extends StatelessWidget {
   final String label;
   final double spendingAmount;
@@ -13,10 +12,14 @@ class ChartBar extends StatelessWidget {
       children: <Widget>[
         // Prevents that this Text keep it's original size | You will not grwo in anyway | Shrinkt to fit into the box
         // Avoid line breaks due to larget text
-        FittedBox(
-          child: Text('\$${spendingAmount.toStringAsFixed(0)}'),
+        Container(
+          //required inorder to ensure that ChartBar & Textbelow chartBar are aligned on same axis when text of FittedBox shrinks
+          height: 20,
+          child: FittedBox(
+            child: Text('\$${spendingAmount.toStringAsFixed(0)}'),
+          ),
         ),
-        // 4 pixels gap
+        // Seperator | 4 pixels gap
         SizedBox(
           height: 4,
         ),
@@ -49,6 +52,7 @@ class ChartBar extends StatelessWidget {
             ],
           ),
         ),
+        // Seperator | 4 pixels gap
         SizedBox(
           height: 4,
         ),

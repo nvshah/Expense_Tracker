@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-//Converted to State ful Widget inorder to avoid loosing of inputs entered in Modal Sheet 
-// this will hold the inputs, as state is being handled diff than Widget & so state is maintained 
+//Converted to State ful Widget inorder to avoid loosing of inputs entered in Modal Sheet
+// this will hold the inputs, as state is being handled diff than Widget & so state is maintained
 class NewTransaction extends StatefulWidget {
   //Properties
   final Function addTx;
@@ -11,29 +12,51 @@ class NewTransaction extends StatefulWidget {
   @override
   _NewTransactionState createState() => _NewTransactionState();
 }
-
 class _NewTransactionState extends State<NewTransaction> {
-  final titleController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _amountController = TextEditingController();
+  DateTime _selectedDate;
 
-  final amountController = TextEditingController();
-  
   // submit transaction data to Denominator/Parent class & so list of transactions get updated
-  void sendData() {
-    String enteredTitle = titleController.text;
-    double enteredAmount = double.parse(amountController.text);
-
+  void _sendData() {
+    if(_amountController.text.isEmpty){
+      return;
+    }
+    String enteredTitle = _titleController.text;
+    double enteredAmount = double.parse(_amountController.text);
     //if any input field is invalid
-    if (enteredTitle.isEmpty || enteredAmount < 0) {
+    if (enteredTitle.isEmpty || enteredAmount < 0 || _selectedDate == null) {
       return;
     }
     // Add transaction to transactions List
     widget.addTx(
       enteredTitle,
       enteredAmount,
+      _selectedDate,
     );
     //close modal sheet when input's completed & transaction added to transaction list; come back to main screen
     //context here gives you context of widget
     Navigator.of(context).pop();
+  }
+
+  //Display DatePicker
+  void _presentDatePicker() {
+    //date cannont be slected for future task & also task which are previous to 2019 date
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
+      //cancel button is clicked
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        //After selecting date ok button is clicked
+        _selectedDate = pickedDate;
+      });
+    });
   }
 
   @override
@@ -43,23 +66,57 @@ class _NewTransactionState extends State<NewTransaction> {
       child: Container(
         padding: EdgeInsets.all(10),
         child: Column(
+          //Specifically meant for FlatButton becuase TextField by default will take all size
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
+            //fetch Title
             TextField(
               decoration: InputDecoration(labelText: 'Title'),
-              controller: titleController,
-              onSubmitted: (_) => sendData(),
+              controller: _titleController,
+              onSubmitted: (_) => _sendData(),
             ),
+            //fetch Amount
             TextField(
               decoration: InputDecoration(labelText: 'Amount'),
-              controller: amountController,
+              controller: _amountController,
               keyboardType: TextInputType.number,
-              onSubmitted: (_) => sendData(),
+              onSubmitted: (_) => _sendData(),
             ),
-            FlatButton(
+            //Date
+            Container(
+              //So that there is litlle space seperation between Amount Textfield & Date Section
+              height: 70,
+              child: Row(
+                children: <Widget>[
+                  //Text takes all space as much as it can extend
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? 'No Date Chosen !'
+                          : 'Picked Date : ${DateFormat.yMd().format(_selectedDate)}',
+                    ),
+                  ),
+                  //date choose button will take as much space as its needs
+                  FlatButton(
+                    textColor: Theme.of(context).primaryColor,
+                    child: Text(
+                      'Choose Date',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: _presentDatePicker,
+                  ),
+                ],
+              ),
+            ),
+            //Add Transaction button
+            RaisedButton(
               child: Text('Add Transaction'),
-              textColor: Colors.purpleAccent,
-              onPressed: sendData,
+              color: Theme.of(context).primaryColor,
+              //default button color text theme define by dart
+              textColor: Theme.of(context).textTheme.button.color,
+              onPressed: _sendData,
             ),
           ],
         ),

@@ -6,7 +6,6 @@ import './widgets/transaction_list.dart';
 import './widgets/chart.dart';
 
 void main() => runApp(MyApp());
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,6 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple, //primary color
         accentColor: Colors.amber, //alternative color
+        //errorColor: Colors.red,   => by default it is red only
         fontFamily: 'Quicksand',
         //Don't override all text but title that is marked in AppBar by flutter
         appBarTheme: AppBarTheme(
@@ -34,34 +34,41 @@ class MyApp extends StatelessWidget {
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
+              button: TextStyle(color: Colors.white),
             ),
       ),
       home: MyHomePage(),
     );
   }
 }
-
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
     //Transaction(id: '2', amount: 10, date: DateTime.now(), title: 'Drinks'),
   ];
 
   // Add new transaction to transaction lists
-  void _addNewTransaction(String txTitle, double txAmount) {
+  void _addNewTransaction(String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
-      date: DateTime.now(),
+      date: chosenDate,
       id: DateTime.now().toString(),
     );
+
     //render newly added transaction on UI
     setState(() {
       _userTransactions.add(newTx);
+    });
+  }
+  
+  //Remove transaction from transaction lists
+  void _deleteTransaction(String id){
+    setState(() {
+     _userTransactions.removeWhere((tx) => tx.id == id); 
     });
   }
 
@@ -104,8 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            //Bar Chart
             Chart(_recentTransactions),
-            TransactionList(_userTransactions),
+            //Transactions List
+            TransactionList(_userTransactions, _deleteTransaction),
           ],
         ),
       ),
