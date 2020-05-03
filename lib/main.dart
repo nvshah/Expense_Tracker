@@ -107,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+      //ScrollView on Parent is required inorder to use scroll view for child
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
