@@ -6,6 +6,7 @@ import './widgets/transaction_list.dart';
 import './widgets/chart.dart';
 
 void main() => runApp(MyApp());
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -41,17 +42,20 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
+
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
     //Transaction(id: '2', amount: 10, date: DateTime.now(), title: 'Drinks'),
   ];
 
   // Add new transaction to transaction lists
-  void _addNewTransaction(String txTitle, double txAmount, DateTime chosenDate) {
+  void _addNewTransaction(
+      String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
@@ -64,11 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _userTransactions.add(newTx);
     });
   }
-  
+
   //Remove transaction from transaction lists
-  void _deleteTransaction(String id){
+  void _deleteTransaction(String id) {
     setState(() {
-     _userTransactions.removeWhere((tx) => tx.id == id); 
+      _userTransactions.removeWhere((tx) => tx.id == id);
     });
   }
 
@@ -80,42 +84,67 @@ class _MyHomePageState extends State<MyHomePage> {
         // It will close only when tap is outside it's area i.e background
         return GestureDetector(
           child: NewTransaction(_addNewTransaction),
-          onTap:() {}, // On Tapping the area of popup modal, it will not close.
-          behavior: HitTestBehavior.opaque, //behaviour -> will catch the event & avoid the tap, catch the tap event & avoid if it's handle by anyone else
+          // On Tapping the area of popup modal, it will not close.
+          onTap: () {},
+          //behaviour -> will catch the event & avoid the tap, catch the tap event & avoid if it's handle by anyone else
+          behavior: HitTestBehavior.opaque,
           //Avoid sheet closes when tap on sheet
         );
       },
     );
   }
 
-  List<Transaction> get _recentTransactions{
+  List<Transaction> get _recentTransactions {
     //Only transactions that are younger than 7 days are included here
-    return _userTransactions.where((tx){
-      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7,)));
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(
+        days: 7,
+      )));
     }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    //We are not changing appBar Once building the app so final
+    //object for AppBar is ceated so that appBar object has info abt height of AppBar
+    final appBar = AppBar(
+      title: Text('Personal Expenses'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _startNewTransactionProcess(context),
+        ),
+      ],
+    );
+
+    //get the height value covered by status bar , which is implicitly assigned by Flutter itlself
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _startNewTransactionProcess(context),
-          ),
-        ],
-      ),
+      appBar: appBar,
       //ScrollView on Parent is required inorder to use scroll view for child
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            //Bar Chart
-            Chart(_recentTransactions),
-            //Transactions List
-            TransactionList(_userTransactions, _deleteTransaction),
+            //Bar Chart | Take 40% of Screen excluding AppBar size & status bar size
+            Container(
+              //Take 40% height of screen left after neglectign appBar height & status bar height
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      statusBarHeight) *
+                  0.4,
+              child: Chart(_recentTransactions),
+            ),
+            //Transactions List | Take 60% of Screen excluding AppBar size & status bar size
+            Container(
+              //Take 60% height of screen left after neglecting appBar height & status bar height
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      statusBarHeight) *
+                  0.6,
+              child: TransactionList(_userTransactions, _deleteTransaction),
+            ),
           ],
         ),
       ),

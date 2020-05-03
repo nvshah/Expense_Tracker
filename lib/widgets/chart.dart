@@ -59,6 +59,7 @@ class Chart extends StatelessWidget {
               return Expanded(
                 //don't allow ChartBar to grow & take size of it's sibbling ChartBar
                 //fit: FlexFit.tight,
+                //ChartBar has it's own dimensions defined independently
                 child: ChartBar(
                     data['day'],
                     data['amount'],
