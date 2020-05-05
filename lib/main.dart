@@ -116,6 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // mediaQuery is gonna change on every build, but within a single build it's remain intact
+    final mediaQuery = MediaQuery.of(context);
+
     //We are not changing appBar Once building the app so final
     //object for AppBar is ceated so that appBar object has info abt height of AppBar
     final appBar = AppBar(
@@ -129,15 +132,15 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     //get the height value covered by status bar , which is implicitly assigned by Flutter itlself
-    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final statusBarHeight = mediaQuery.padding.top;
 
     // check if current orientation is landscope or not
-    final isLandScapeMode = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandScapeMode = mediaQuery.orientation == Orientation.landscape;
 
     //Transactions List | Take 70% of Screen excluding AppBar size & status bar size
     final txListWidget = Container(
       //Take 70% height of screen left after neglecting appBar height & status bar height
-      height: (MediaQuery.of(context).size.height -
+      height: (mediaQuery.size.height -
               appBar.preferredSize.height -
               statusBarHeight) *
           0.7,
@@ -171,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
               //Bar Chart | Take 30% of Screen excluding AppBar size & status bar size in potrait mode
               Container(
                 //Take 30% height of screen left after neglectign appBar height & status bar height in Potrait mode
-                height: (MediaQuery.of(context).size.height -
+                height: (mediaQuery.size.height -
                         appBar.preferredSize.height -
                         statusBarHeight) *
                     0.3,
@@ -184,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //Bar Chart | Take 70% of Screen excluding AppBar size & status bar size in landscape mode
                   Container(
                       //Take 70% height of screen left after neglecting appBar height & status bar height in landscape mode
-                      height: (MediaQuery.of(context).size.height -
+                      height: (mediaQuery.size.height -
                               appBar.preferredSize.height -
                               statusBarHeight) *
                           0.7,
