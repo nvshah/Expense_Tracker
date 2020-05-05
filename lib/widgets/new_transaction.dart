@@ -12,6 +12,7 @@ class NewTransaction extends StatefulWidget {
   @override
   _NewTransactionState createState() => _NewTransactionState();
 }
+
 class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
@@ -19,7 +20,7 @@ class _NewTransactionState extends State<NewTransaction> {
 
   // submit transaction data to Denominator/Parent class & so list of transactions get updated
   void _sendData() {
-    if(_amountController.text.isEmpty){
+    if (_amountController.text.isEmpty){
       return;
     }
     String enteredTitle = _titleController.text;
@@ -61,64 +62,76 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          //Specifically meant for FlatButton becuase TextField by default will take all size
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            //fetch Title
-            TextField(
-              decoration: InputDecoration(labelText: 'Title'),
-              controller: _titleController,
-              onSubmitted: (_) => _sendData(),
-            ),
-            //fetch Amount
-            TextField(
-              decoration: InputDecoration(labelText: 'Amount'),
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _sendData(),
-            ),
-            //Date
-            Container(
-              //So that there is litlle space seperation between Amount Textfield & Date Section
-              height: 70,
-              child: Row(
-                children: <Widget>[
-                  //Text takes all space as much as it can extend
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? 'No Date Chosen !'
-                          : 'Picked Date : ${DateFormat.yMd().format(_selectedDate)}',
-                    ),
-                  ),
-                  //date choose button will take as much space as its needs
-                  FlatButton(
-                    textColor: Theme.of(context).primaryColor,
-                    child: Text(
-                      'Choose Date',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+    // We Require SingleChildScrollView as size of Modal Sheet is fixed & so we can scroll between form input when Soft Keyboard is up
+    // So that user can Reach all the inputs with keyboard still being on the screen
+    return SingleChildScrollView(
+          child: Card(
+        elevation: 5,
+        //Here Instead of Container Padding Widget can also be used
+        child: Container(
+          //Soft Keyboard will overlap the Card as Soft Keyboard popups from bottom
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            //As We want our Form Inputs in modal sheet be avoid being lapped by SoftKeyboard Popup | SoftKeyboard Popups from bottom
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          ),
+          child: Column(
+            //Specifically meant for FlatButton becuase TextField by default will take all size
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              //fetch Title
+              TextField(
+                decoration: InputDecoration(labelText: 'Title'),
+                controller: _titleController,
+                onSubmitted: (_) => _sendData(),
+              ),
+              //fetch Amount
+              TextField(
+                decoration: InputDecoration(labelText: 'Amount'),
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _sendData(),
+              ),
+              //Date
+              Container(
+                //So that there is litlle space seperation between Amount Textfield & Date Section
+                height: 70,
+                child: Row(
+                  children: <Widget>[
+                    //Text takes all space as much as it can extend | Expanded so that FlatButton next to it can appear at Right end
+                    Expanded(
+                      child: Text(
+                        _selectedDate == null
+                            ? 'No Date Chosen !'
+                            : 'Picked Date : ${DateFormat.yMd().format(_selectedDate)}',
                       ),
                     ),
-                    onPressed: _presentDatePicker,
-                  ),
-                ],
+                    //date choose button will take as much space as its needs
+                    FlatButton(
+                      textColor: Theme.of(context).primaryColor,
+                      child: Text(
+                        'Choose Date',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onPressed: _presentDatePicker,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            //Add Transaction button
-            RaisedButton(
-              child: Text('Add Transaction'),
-              color: Theme.of(context).primaryColor,
-              //default button color text theme define by dart
-              textColor: Theme.of(context).textTheme.button.color,
-              onPressed: _sendData,
-            ),
-          ],
+              //Add Transaction button
+              RaisedButton(
+                child: Text('Add Transaction'),
+                color: Theme.of(context).primaryColor,
+                //default button color text theme define by dart
+                textColor: Theme.of(context).textTheme.button.color,
+                onPressed: _sendData,
+              ),
+            ],
+          ),
         ),
       ),
     );

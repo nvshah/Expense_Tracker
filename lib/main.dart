@@ -57,14 +57,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _showChart = false;
+  // decide whether to show chart or not
+  bool _showChart = false; 
   final List<Transaction> _userTransactions = [
     //Transaction(id: '2', amount: 10, date: DateTime.now(), title: 'Drinks'),
   ];
 
   // Add new transaction to transaction lists
   void _addNewTransaction(
-      String txTitle, double txAmount, DateTime chosenDate) {
+    String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
@@ -87,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Initiate Pop up Modal to take inputs for new transaction
   void _startNewTransactionProcess(BuildContext ctxt) {
+    // Pop up new modal sheet from bottom | Modal sheet have fixed height
     showModalBottomSheet(
       context: ctxt,
       builder: (_) {
@@ -130,8 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final statusBarHeight = MediaQuery.of(context).padding.top;
 
     // check if current orientation is landscope or not
-    final isLandScapeMode =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandScapeMode = MediaQuery.of(context).orientation == Orientation.landscape;
 
     //Transactions List | Take 70% of Screen excluding AppBar size & status bar size
     final txListWidget = Container(
@@ -178,11 +179,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               txListWidget,
             ] else
-              _showChart
+              _showChart  // Landscape Mode
                   ?
                   //Bar Chart | Take 70% of Screen excluding AppBar size & status bar size in landscape mode
                   Container(
-                      //Take 70% height of screen left after neglectign appBar height & status bar height in landscape mode
+                      //Take 70% height of screen left after neglecting appBar height & status bar height in landscape mode
                       height: (MediaQuery.of(context).size.height -
                               appBar.preferredSize.height -
                               statusBarHeight) *

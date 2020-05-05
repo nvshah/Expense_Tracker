@@ -30,7 +30,7 @@ class TransactionList extends StatelessWidget {
                   // Image
                   Container(
                     //Image need container as a parent inorder to fit appropriate otherwise it will not fit to column as column takes as much height as it got
-                    //Image will take height dynamically equals to 60% of the available height fot transactions list
+                    //Image will take height dynamically equals to 60% of the available height fot transactions list Widget (custom)
                     height: constraints.maxHeight * 0.6,
                     child: Image.asset(
                       'assets/images/waiting.png',
