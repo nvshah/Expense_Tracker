@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -20,7 +23,7 @@ class _NewTransactionState extends State<NewTransaction> {
 
   // submit transaction data to Denominator/Parent class & so list of transactions get updated
   void _sendData() {
-    if (_amountController.text.isEmpty){
+    if (_amountController.text.isEmpty) {
       return;
     }
     String enteredTitle = _titleController.text;
@@ -65,7 +68,7 @@ class _NewTransactionState extends State<NewTransaction> {
     // We Require SingleChildScrollView as size of Modal Sheet is fixed & so we can scroll between form input when Soft Keyboard is up
     // So that user can Reach all the inputs with keyboard still being on the screen
     return SingleChildScrollView(
-          child: Card(
+      child: Card(
         elevation: 5,
         //Here Instead of Container Padding Widget can also be used
         child: Container(
@@ -109,16 +112,28 @@ class _NewTransactionState extends State<NewTransaction> {
                       ),
                     ),
                     //date choose button will take as much space as its needs
-                    FlatButton(
-                      textColor: Theme.of(context).primaryColor,
-                      child: Text(
-                        'Choose Date',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onPressed: _presentDatePicker,
-                    ),
+                    Platform.isIOS
+                        ? CupertinoButton(
+                          //This makes it RaisedButton
+                          //color: Colors.blue,
+                            child: Text(
+                              'Choose Date',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: _presentDatePicker,
+                          )
+                        : FlatButton(
+                            textColor: Theme.of(context).primaryColor,
+                            child: Text(
+                              'Choose Date',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: _presentDatePicker,
+                          ),
                   ],
                 ),
               ),

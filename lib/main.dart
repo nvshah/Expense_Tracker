@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -58,14 +61,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // decide whether to show chart or not
-  bool _showChart = false; 
+  bool _showChart = false;
   final List<Transaction> _userTransactions = [
     //Transaction(id: '2', amount: 10, date: DateTime.now(), title: 'Drinks'),
   ];
 
   // Add new transaction to transaction lists
   void _addNewTransaction(
-    String txTitle, double txAmount, DateTime chosenDate) {
+      String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
@@ -119,23 +122,42 @@ class _MyHomePageState extends State<MyHomePage> {
     // mediaQuery is gonna change on every build, but within a single build it's remain intact
     final mediaQuery = MediaQuery.of(context);
 
-    //We are not changing appBar Once building the app so final
-    //object for AppBar is ceated so that appBar object has info abt height of AppBar
-    final appBar = AppBar(
-      title: Text('Personal Expenses'),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => _startNewTransactionProcess(context),
-        ),
-      ],
-    );
-
     //get the height value covered by status bar , which is implicitly assigned by Flutter itlself
     final statusBarHeight = mediaQuery.padding.top;
 
     // check if current orientation is landscope or not
     final isLandScapeMode = mediaQuery.orientation == Orientation.landscape;
+
+    //We are not changing appBar Once building the app so final is used
+    //object for AppBar is ceated so that appBar object has info abt height of AppBar
+    //Here Type Casting of PreferredSizeWidget is needed because dart cannot infer the type & later we are using preferredSize property in txListWidget
+    final PreferredSizeWidget appBar = Platform.isIOS
+        // IOS looks | Navigation Bar
+        ? CupertinoNavigationBar(
+            middle: Text('Personal Expenses'),
+            //here trailing has no boundaries & Row can get as much width as it can & due to this middle portion will not be displayed
+            trailing: Row(
+              //this will fix problem of not showing of Text- Personal Expenses ( i.e middle portion )
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                //Cupertino Design do not have IconButton & So We cannot use it over here as Parent is Cupertino Design Widget
+                //We cannot use Material Design Widget inside Cupertino as a Root Parent,
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startNewTransactionProcess(context),
+                )
+              ],
+            ))
+        //Android looks App Bar
+        : AppBar(
+            title: Text('Personal Expenses'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () => _startNewTransactionProcess(context),
+              ),
+            ],
+          );
 
     //Transactions List | Take 70% of Screen excluding AppBar size & status bar size
     final txListWidget = Container(
@@ -147,61 +169,74 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TransactionList(_userTransactions, _deleteTransaction),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      //ScrollView on Parent is required inorder to use scroll view for child
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            //Switch
-            if (isLandScapeMode)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Show Chart'),
-                  Switch(
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    },
+    //body parameter value for Android | child parameter value for IOS
+    final pageBody = SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          //Switch
+          if (isLandScapeMode)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                //In Cupertino Page Scaffold, We can't get a theme assigned to Text here so We need to explicitly set a style for it.
+                Text('Show Chart',style: Theme.of(context).textTheme.title,),
+                //This will make switch adaptive to Platform i.e IOS or Android or else ...
+                Switch.adaptive(
+                  value: _showChart,
+                  onChanged: (val) {
+                    setState(() {
+                      _showChart = val;
+                    });
+                  },
+                )
+              ],
+            ),
+          if (!isLandScapeMode) ...[
+            //Bar Chart | Take 30% of Screen excluding AppBar size & status bar size in potrait mode
+            Container(
+              //Take 30% height of screen left after neglectign appBar height & status bar height in Potrait mode
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      statusBarHeight) *
+                  0.3,
+              child: Chart(_recentTransactions),
+            ),
+            txListWidget,
+          ] else
+            _showChart // Landscape Mode
+                ?
+                //Bar Chart | Take 70% of Screen excluding AppBar size & status bar size in landscape mode
+                Container(
+                    //Take 70% height of screen left after neglecting appBar height & status bar height in landscape mode
+                    height: (mediaQuery.size.height -
+                            appBar.preferredSize.height -
+                            statusBarHeight) *
+                        0.7,
+                    child: Chart(_recentTransactions),
                   )
-                ],
-              ),
-            if (!isLandScapeMode) ...[
-              //Bar Chart | Take 30% of Screen excluding AppBar size & status bar size in potrait mode
-              Container(
-                //Take 30% height of screen left after neglectign appBar height & status bar height in Potrait mode
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        statusBarHeight) *
-                    0.3,
-                child: Chart(_recentTransactions),
-              ),
-              txListWidget,
-            ] else
-              _showChart  // Landscape Mode
-                  ?
-                  //Bar Chart | Take 70% of Screen excluding AppBar size & status bar size in landscape mode
-                  Container(
-                      //Take 70% height of screen left after neglecting appBar height & status bar height in landscape mode
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              statusBarHeight) *
-                          0.7,
-                      child: Chart(_recentTransactions),
-                    )
-                  : txListWidget,
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startNewTransactionProcess(context),
+                : txListWidget,
+        ],
       ),
     );
+    
+    //Scaffold Platform Dependence
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            //ScrollView on Parent is required inorder to use scroll view for child
+            body: pageBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            //For IOS platform, floating button is unfamiliar so avoiding it in IOS OS
+            floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => _startNewTransactionProcess(context),
+            ),
+          );
   }
 }
