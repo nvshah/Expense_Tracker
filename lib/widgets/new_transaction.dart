@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import './adaptive_flat_button.dart';
+
 //Converted to State ful Widget inorder to avoid loosing of inputs entered in Modal Sheet
 // this will hold the inputs, as state is being handled diff than Widget & so state is maintained
 class NewTransaction extends StatefulWidget {
@@ -112,28 +114,7 @@ class _NewTransactionState extends State<NewTransaction> {
                       ),
                     ),
                     //date choose button will take as much space as its needs
-                    Platform.isIOS
-                        ? CupertinoButton(
-                          //This makes it RaisedButton
-                          //color: Colors.blue,
-                            child: Text(
-                              'Choose Date',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            onPressed: _presentDatePicker,
-                          )
-                        : FlatButton(
-                            textColor: Theme.of(context).primaryColor,
-                            child: Text(
-                              'Choose Date',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            onPressed: _presentDatePicker,
-                          ),
+                    AdaptiveFlatButton('Choose Date', _presentDatePicker),
                   ],
                 ),
               ),
