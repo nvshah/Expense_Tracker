@@ -6,8 +6,8 @@ import 'package:intl/intl.dart';
 
 import './adaptive_flat_button.dart';
 
-//Converted to State ful Widget inorder to avoid loosing of inputs entered in Modal Sheet
-// this will hold the inputs, as state is being handled diff than Widget & so state is maintained
+//Converted to State ful Widget inorder to avoid loosing of inputs entered in Modal Sheet ( for now to hold date selected )
+//this will hold the inputs, as state is being handled diff than Widget & so state is maintained
 class NewTransaction extends StatefulWidget {
   //Properties
   final Function addTx;

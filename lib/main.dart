@@ -68,7 +68,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Add new transaction to transaction lists
   void _addNewTransaction(
-      String txTitle, double txAmount, DateTime chosenDate) {
+    String txTitle,
+    double txAmount,
+    DateTime chosenDate,
+  ) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
@@ -180,7 +183,10 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 //In Cupertino Page Scaffold, We can't get a theme assigned to Text here so We need to explicitly set a style for it.
-                Text('Show Chart',style: Theme.of(context).textTheme.title,),
+                Text(
+                  'Show Chart',
+                  style: Theme.of(context).textTheme.title,
+                ),
                 //This will make switch adaptive to Platform i.e IOS or Android or else ...
                 Switch.adaptive(
                   value: _showChart,
@@ -219,7 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
-    
+
     //Scaffold Platform Dependence
     return Platform.isIOS
         ? CupertinoPageScaffold(
