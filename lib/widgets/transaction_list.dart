@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../models/transaction.dart';
+import './transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -13,6 +13,8 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     // Bottom container will have fixed 60% of screen height
     return transactions.isEmpty
+        // LayoutBuilder use to manage space appropriately & build mainly Row & Column type widget more efficiently
+        // Empty Transaction List
         ? LayoutBuilder(
             builder: (ctxt, constraints) {
               return Column(
@@ -46,53 +48,9 @@ class TransactionList extends StatelessWidget {
         : ListView.builder(
             itemBuilder: (ctxt, index) {
               //Each Transaction Card
-              return Card(
-                elevation: 6,
-                margin: EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 5,
-                ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 30,
-                    child: Padding(
-                      padding: EdgeInsets.all(6.0),
-                      child: FittedBox(
-                        // Amount | Display the amount in always 2 decimal places
-                        child: Text(
-                          '\$${transactions[index].amount.toStringAsFixed(2)}',
-                        ),
-                      ),
-                    ),
-                  ),
-                  //Title
-                  title: Text(
-                    transactions[index].title,
-                    style: Theme.of(context).textTheme.title,
-                  ),
-                  //Date
-                  subtitle: Text(
-                    DateFormat.yMMMd().format(transactions[index].date),
-                    style: TextStyle(
-                      color: Colors.blueGrey,
-                    ),
-                  ),
-                  //Delete transaction button | If device has sufficient size the label along with icon will be shown
-                  trailing: MediaQuery.of(context).size.width > 460
-                      ? FlatButton.icon(
-                          icon: const Icon(Icons.delete),
-                          //Eliminating redundant object instantiation on rebuild
-                          label: const Text('Delete'),
-                          textColor: Theme.of(context).errorColor,
-                          onPressed: () => deleteTx(transactions[index].id),
-                        )
-                      : IconButton(
-                          //trash Icon
-                          icon: const Icon(Icons.delete),
-                          color: Theme.of(context).errorColor,
-                          onPressed: () => deleteTx(transactions[index].id),
-                        ),
-                ),
+              return TransactionItem(
+                transaction: transactions[index],
+                deleteTx: deleteTx,
               );
             },
             itemCount: transactions.length,
