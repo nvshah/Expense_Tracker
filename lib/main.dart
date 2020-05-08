@@ -68,10 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Add new transaction to transaction lists
   void _addNewTransaction(
-    String txTitle,
-    double txAmount,
-    DateTime chosenDate,
-  ) {
+      String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
@@ -111,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  //get recent transaction within 7 days
   List<Transaction> get _recentTransactions {
     //Only transactions that are younger than 7 days are included here
     return _userTransactions.where((tx) {
@@ -118,6 +116,63 @@ class _MyHomePageState extends State<MyHomePage> {
         days: 7,
       )));
     }).toList();
+  }
+
+  //build main body part i,e chart bar & transaction list for landscape view
+  List<Widget> _buildLandScapeContent(MediaQueryData mediaQuery, AppBar appBar,
+      double statusBarHeight, Widget txListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          //In Cupertino Page Scaffold, We can't get a theme assigned to Text here so We need to explicitly set a style for it.
+          Text(
+            'Show Chart',
+            style: Theme.of(context).textTheme.title,
+          ),
+          //This will make switch adaptive to Platform i.e IOS or Android or else ...
+          Switch.adaptive(
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          )
+        ],
+      ),
+      _showChart
+          ?
+          //Bar Chart | Take 70% of Screen excluding AppBar size & status bar size in landscape mode
+          Container(
+              //Take 70% height of screen left after neglecting appBar height & status bar height in landscape mode
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      statusBarHeight) *
+                  0.7,
+              child: Chart(_recentTransactions),
+            )
+          //List of transactions
+          : txListWidget,
+    ];
+  }
+
+  //build main body part i,e chart bar & transaction list for potrait view
+  List<Widget> _buildPotraitContent(MediaQueryData mediaQuery, AppBar appBar,
+      double statusBarHeight, Widget txListWidget) {
+    return [
+      //Bar Chart | Take 30% of Screen excluding AppBar size & status bar size in potrait mode
+      Container(
+        //Take 30% height of screen left after neglectign appBar height & status bar height in Potrait mode
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                statusBarHeight) *
+            0.3,
+        child: Chart(_recentTransactions),
+      ),
+      // List of transactions
+      txListWidget,
+    ];
   }
 
   @override
@@ -173,56 +228,20 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     //body parameter value for Android | child parameter value for IOS
-    final pageBody = SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          //Switch
-          if (isLandScapeMode)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                //In Cupertino Page Scaffold, We can't get a theme assigned to Text here so We need to explicitly set a style for it.
-                Text(
-                  'Show Chart',
-                  style: Theme.of(context).textTheme.title,
-                ),
-                //This will make switch adaptive to Platform i.e IOS or Android or else ...
-                Switch.adaptive(
-                  value: _showChart,
-                  onChanged: (val) {
-                    setState(() {
-                      _showChart = val;
-                    });
-                  },
-                )
-              ],
-            ),
-          if (!isLandScapeMode) ...[
-            //Bar Chart | Take 30% of Screen excluding AppBar size & status bar size in potrait mode
-            Container(
-              //Take 30% height of screen left after neglectign appBar height & status bar height in Potrait mode
-              height: (mediaQuery.size.height -
-                      appBar.preferredSize.height -
-                      statusBarHeight) *
-                  0.3,
-              child: Chart(_recentTransactions),
-            ),
-            txListWidget,
-          ] else
-            _showChart // Landscape Mode
-                ?
-                //Bar Chart | Take 70% of Screen excluding AppBar size & status bar size in landscape mode
-                Container(
-                    //Take 70% height of screen left after neglecting appBar height & status bar height in landscape mode
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            statusBarHeight) *
-                        0.7,
-                    child: Chart(_recentTransactions),
-                  )
-                : txListWidget,
-        ],
+    //Safe Area so that reserved area on screen such as notch are respected while calculating heights of some layouts
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            //Switch
+            ...(isLandScapeMode
+                ? _buildLandScapeContent(
+                    mediaQuery, appBar, statusBarHeight, txListWidget)
+                : _buildPotraitContent(
+                    mediaQuery, appBar, statusBarHeight, txListWidget)),
+          ],
+        ),
       ),
     );
 
