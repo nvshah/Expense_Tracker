@@ -49,7 +49,6 @@ class TransactionList extends StatelessWidget {
             //Each Transaction Card
             children: transactions
                 .map((tx) => TransactionItem(
-                      
                       // Keys is required inorder to assure color of avatar of transaction item
                       key: ValueKey(tx.id),
                       transaction: tx,
