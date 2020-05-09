@@ -94,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Pop up new modal sheet from bottom | Modal sheet have fixed height
     showModalBottomSheet(
       context: ctxt,
+      //Here _ refers to own context of modal bottom sheet
       builder: (_) {
         // It will close only when tap is outside it's area i.e background
         return GestureDetector(

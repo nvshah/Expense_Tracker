@@ -45,15 +45,27 @@ class TransactionList extends StatelessWidget {
             },
           )
         //ListView - So that transactions can be scrolled within Container
-        : ListView.builder(
-            itemBuilder: (ctxt, index) {
-              //Each Transaction Card
-              return TransactionItem(
-                transaction: transactions[index],
-                deleteTx: deleteTx,
-              );
-            },
-            itemCount: transactions.length,
+        : ListView(
+            //Each Transaction Card
+            children: transactions
+                .map((tx) => TransactionItem(
+                      
+                      // Keys is required inorder to assure color of avatar of transaction item
+                      key: ValueKey(tx.id),
+                      transaction: tx,
+                      deleteTx: deleteTx,
+                    ))
+                .toList(),
           );
+    // : ListView.builder(
+    //     itemBuilder: (ctxt, index) {
+    //       //Each Transaction Card
+    //       return TransactionItem(
+    //         transaction: transactions[index],
+    //         deleteTx: deleteTx,
+    //       );
+    //     },
+    //     itemCount: transactions.length,
+    //   );
   }
 }
